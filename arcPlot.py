@@ -1170,30 +1170,64 @@ def parseArgs():
 
 
 
-if __name__=="__main__":
- 
-    args = parseArgs()
-    
+def plotArcs(title=None, fasta=None, bottom=False, ct=None, ctstructnum=0,
+             filterNC=False, refct=None, refctstructnum=0, ringpairsuper=False,
+             probability=None, probability_bins=None, pairmap=None,
+             pairmap_all=False, ringz=None, ringz_bins=None,
+             contactFilter=None, filternegcorrs=False, ringsig=None,
+             ringsig_bins=None, compare_pairmap=None, ntshape=None,
+             profile=None, dmsprofile=None, showGrid=False, outputPDF="show",
+             bound=None):
+    """A flexible function to plot secondary structure data on an arc plot.
+
+    Args:
+        title (string, optional): A title for the plot. Defaults to None.
+        fasta (string, optional): Path to fasta file. Defaults to None.
+        bottom (bool, optional): Plot arcs on the bottom. Defaults to False.
+        ct (string, optional): Path to .ct file. Defaults to None.
+        ctstructnum (int, optional): Structure number to plot from ct file. Defaults to 0.
+        filterNC (bool, optional): Filter non-canonical basepairs. Defaults to False.
+        refct (string, optional): Path to .ct file for comparison. Defaults to None.
+        refctstructnum (int, optional): Structure number to plot from reference ct file. Defaults to 0.
+        ringpairsuper (bool, optional): whether to superimpose RInG and PAIR data. Defaults to False.
+        probability (string, optional): Path to pairing probability file. Defaults to None.
+        probability_bins (list, optional): At most 4 values to bin probabilities. Defaults to None.
+        pairmap (string, optional): Path to pairmap file. Defaults to None.
+        pairmap_all (bool, optional): Plot all complimentary correlations. Defaults to False.
+        ringz (string, optional): Path to ring file to plot by z-score. Defaults to None.
+        ringz_bins (list, optional): 2 values for binning z-scores. Defaults to None.
+        contactFilter (int, optional): Minimum value for contact distance filtering. Defaults to None.
+        filternegcorrs (bool, optional): Filter negative correlations. Defaults to False.
+        ringsig (string, optional): Path to ring file to plot by significance. Defaults to None.
+        ringsig_bins (list, optional): 2 values for binning significance. Defaults to None.
+        compare_pairmap (string, optional): Path to second pairmap file for comparison. Defaults to None.
+        ntshape (string, optional): Path to shape/map file. Defaults to None.
+        profile (string, optional): Path to profile.txt file. Defaults to None.
+        dmsprofile (string, optional): Path to DMS reactivity file. Defaults to None.
+        showGrid (bool, optional): Show grid on plot. Defaults to False.
+        outputPDF (str, optional): Path to output PDF file. Defaults to "show", which will display inline.
+        bound (list, optional): 2 nucleotide positions to trim the plot to. Defaults to None.
+    """
     msg = None
     CT1=None
     
-    aplot = ArcPlot(title = args.title, fasta=args.fasta)
+    aplot = ArcPlot(title = title, fasta=fasta)
 
     panel = 1
-    if args.bottom:
+    if bottom:
         panel = -1
 
-    if args.ct:
+    if ct:
         
-        CT1 = RNAtools.CT(args.ct, structNum=args.ctstructnum, filterNC=args.filternc)
+        CT1 = RNAtools.CT(ct, structNum=ctstructnum, filterNC=filternc)
 
-        if args.refct:
-            refCT = RNAtools.CT(args.refct, structNum=args.refctstructnum, filterNC=args.filternc)
+        if refct:
+            refCT = RNAtools.CT(refct, structNum=refctstructnum, filterNC=filternc)
             aplot.compareCTs( refCT, CT1, panel=panel)
         
         else:
             alpha = 0.7
-            if args.ringpairsuper:
+            if ringpairsuper:
                 alpha=0.2
             
             aplot.addCT( CT1, panel=panel, alpha=alpha)
@@ -1201,39 +1235,39 @@ if __name__=="__main__":
         panel *= -1
 
 
-    if args.probability:
-        aplot.addPairProb( RNAtools.DotPlot(args.probability), panel=panel, bins=args.probability_bins)
+    if probability:
+        aplot.addPairProb( RNAtools.DotPlot(probability), panel=panel, bins=probability_bins)
         panel *= -1
 
 
-    if args.pairmap:
+    if pairmap:
 
         from pmanalysis import PairMap
         
-        if args.ringpairsuper:
-            aplot.addPairMap( PairMap(args.pairmap), panel=1, plotall=args.pairmap_all)
+        if ringpairsuper:
+            aplot.addPairMap( PairMap(pairmap), panel=1, plotall=pairmap_all)
 
         else:
-            aplot.addPairMap( PairMap(args.pairmap), panel=panel, plotall=args.pairmap_all)
+            aplot.addPairMap( PairMap(pairmap), panel=panel, plotall=pairmap_all)
             panel *= -1
         
 
-    if args.ringz:
-        aplot.addRings(args.ringz, panel=panel, metric='z', bins=args.ringz_bins,
-                       contactfilter=(args.contactfilter, CT1), filterneg=args.filternegcorrs)
+    if ringz:
+        aplot.addRings(ringz, panel=panel, metric='z', bins=ringz_bins,
+                       contactfilter=(contactfilter, CT1), filterneg=filternegcorrs)
         panel *= -1
     
-    if args.ringsig:
-        aplot.addRings(args.ringsig, panel=panel, metric='sig', bins=args.ringsig_bins,
-                       contactfilter=(args.contactfilter, CT1), filterneg=args.filternegcorrs)
+    if ringsig:
+        aplot.addRings(ringsig, panel=panel, metric='sig', bins=ringsig_bins,
+                       contactfilter=(contactfilter, CT1), filterneg=filternegcorrs)
         panel *= -1
 
     
-    if args.compare_pairmap:
+    if compare_pairmap:
         
         from pmanalysis import PairMap
         
-        aplot.addPairMap( PairMap(args.compare_pairmap), panel=panel, plotall=args.pairmap_all)
+        aplot.addPairMap( PairMap(compare_pairmap), panel=panel, plotall=pairmap_all)
         panel *= -1
 
 
@@ -1243,21 +1277,23 @@ if __name__=="__main__":
     #    aplot.addInteractionDistance(arg.intDistance, arg.depthThresh, panel)
             
 
-    if args.ntshape:
-        aplot.colorSeqByMAP(args.ntshape)
+    if ntshape:
+        aplot.colorSeqByMAP(ntshape)
 
-    if args.profile:  
-        aplot.readProfile(args.profile)
+    if profile:  
+        aplot.readProfile(profile)
     
-    if args.dmsprofile:
-        aplot.readDMSProfile(args.dmsprofile)
+    if dmsprofile:
+        aplot.readDMSProfile(dmsprofile)
 
-    if args.showGrid:
+    if showGrid:
         aplot.grid = True
 
-    aplot.writePlot( args.outputPDF, bounds = args.bound, msg=msg)
+    aplot.writePlot( outputPDF, bounds = bound, msg=msg)
 
 
+if __name__ == "__main__":
+    plotArcs(**vars(parseArgs()))
 
 
 

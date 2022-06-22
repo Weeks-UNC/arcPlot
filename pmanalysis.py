@@ -99,7 +99,7 @@ class PairMap(object):
         """
         
         if mask:
-            print len(ctobj.mask), len(ctobj.mask)-sum(ctobj.mask)
+            print(len(ctobj.mask), len(ctobj.mask)-sum(ctobj.mask))
 
         if exact:
             allowedoffset = 0
@@ -128,7 +128,7 @@ class PairMap(object):
             if not (mask and masked(pair, ctobj.mask, self.window)):
                 predpairs.append(pair)
             elif verbal:
-                print 'Skipped {0}'.format(pair)
+                print('Skipped {0}'.format(pair))
 
         predpairs = set(predpairs)
 
@@ -139,7 +139,7 @@ class PairMap(object):
         # need to shift helix indices to match window-shifting in PairMap
         shifted_helices = {}
         knowndup = []
-        for h,pairs in helices.items():
+        for h,pairs in list(helices.items()):
             
             temphelix = []
             
@@ -177,9 +177,9 @@ class PairMap(object):
                 knowndup.extend( temphelix )
                 shifted_helices[h] = temphelix
                 if verbal:
-                    print h, temphelix
+                    print(h, temphelix)
             elif verbal:
-                print h, 'skipped', pairs
+                print(h, 'skipped', pairs)
             #    print "WARNING: Helix starting at pair {0} skipped because of no data".format(pairs[0])
 
         
@@ -199,7 +199,7 @@ class PairMap(object):
             if c in knowndup or nonexactMatch(c, knowndup, allowedoffset):
                 ppvset.add(c)
             elif printFP:
-                print('FP: {}'.format(c))    
+                print(('FP: {}'.format(c)))    
         
 
         if len(predpairs)==0:
@@ -292,7 +292,7 @@ if __name__ == '__main__':
     
     
     p,s = pm.ppvsens_duplex(ct, ptype=args.ptype, exact=False, profile=profile, mask=args.mask, verbal=args.verbal)
-    print "PPV={0:.0f}  Sens={1:.0f}".format(p*100, s*100)
+    print("PPV={0:.0f}  Sens={1:.0f}".format(p*100, s*100))
 
     #print pm.ppvsens_duplex(ct, ptype=1, exact=True, profile=profile)
 

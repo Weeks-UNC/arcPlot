@@ -331,7 +331,7 @@ class ArcPlot(object):
         ax.tick_params(axis='y', direction='out', labelsize=6, left=True, right=False)
         ax.set_yticks( np.array(colthresh[1:])*heightscale+self.adjust )
         
-        labels = map(str, colthresh[1:])
+        labels = list(map(str, colthresh[1:]))
         labels[-1] = '>'+labels[-1]
         ax.set_yticklabels( labels )
         ax.set_ylabel('Norm. React.', position=(0,0), ha='left', size=6)
@@ -529,7 +529,7 @@ class ArcPlot(object):
         if self.seq == '' or self.seq[0] == ' ':
             self.seq = ctObj.seq
         elif len(self.seq) != seqlen:
-            print "Warning:: CT length = {0}; expecting length = {1}".format(seqlen, len(self.seq))
+            print("Warning:: CT length = {0}; expecting length = {1}".format(seqlen, len(self.seq)))
         
 
         i = 0
@@ -563,7 +563,7 @@ class ArcPlot(object):
         """
         
         if contactfilter[0]:
-            print("Performing contact filtering with distance={}".format(contactfilter[0]))
+            print(("Performing contact filtering with distance={}".format(contactfilter[0])))
         
         if filterneg:
             print("Filtering out negative correlations")
@@ -626,7 +626,7 @@ class ArcPlot(object):
 
 
         if len(allcorrs)==0:
-            print('WARNING: No RINGs passing filter in {}'.format(ringfile))
+            print(('WARNING: No RINGs passing filter in {}'.format(ringfile)))
 
 
         for i in range(len(bins)-1):
@@ -675,7 +675,7 @@ class ArcPlot(object):
         if self.seq == '':
             self.seq = ' '*dpObj.length
         elif len(self.seq) != dpObj.length:
-            print "Warning:: dp file sequence length = {0}; CT/FASTA length = {1}".format(dpObj.length, len(self.seq))
+            print("Warning:: dp file sequence length = {0}; CT/FASTA length = {1}".format(dpObj.length, len(self.seq)))
 
 
         refcolors = [ (150,150,150), (255,204,0),  (72,143,205) ,(81, 184, 72) ]
@@ -716,10 +716,10 @@ class ArcPlot(object):
                 pos = ( elem['pair'] == p[1]-1) # make mask
                 strength.append(elem['log10'][pos][0]) # get value
 
-            strengthzip = zip(cutpairs, strength)
+            strengthzip = list(zip(cutpairs, strength))
             strengthzip.sort(key=lambda x: x[1], reverse=True)
 
-            cutpairs, strength = zip(*strengthzip)
+            cutpairs, strength = list(zip(*strengthzip))
             
             # iterate through sorted pairs and draw arcs
             for pindex, pair in enumerate(cutpairs):
@@ -753,7 +753,7 @@ class ArcPlot(object):
         """
 
         if len(pmobj.primary)==0 and len(pmobj.secondary)==0:
-            print('WARNING: No PAIR-MaP correlations in {}'.format(pmobj.sourcename))
+            print(('WARNING: No PAIR-MaP correlations in {}'.format(pmobj.sourcename)))
 
 
         def getZ(corrlist):
@@ -859,7 +859,7 @@ class ArcPlot(object):
                 c.ct[i] = 0
     
 
-        for i in xrange(len(refCT.ct)):
+        for i in range(len(refCT.ct)):
             
             if refCT.ct[i] == compCT.ct[i]:
                 share.ct[i] = refCT.ct[i]
@@ -877,7 +877,7 @@ class ArcPlot(object):
 
         sens,ppv,nums = refCT.computePPVSens(compCT, False)
         msg = 'Sens={0:.2f} PPV={1:.2f}'.format(sens, ppv)
-        print msg
+        print(msg)
 
         if panel>0:
             self.toplegend = ArcLegend(colors=[sharedcolor,refcolor,compcolor], 
@@ -978,14 +978,14 @@ class ArcPlot(object):
         height = []
         readMat = np.loadtxt(readMatFile)
 
-        for i in xrange(len(self.seq)):
+        for i in range(len(self.seq)):
             
-            for j in xrange(i,len(self.seq)):
+            for j in range(i,len(self.seq)):
                 if readMat[i][j] < thresh:
                     break
             n = float(j-i)
 
-            for j in xrange(i, -1, -1):
+            for j in range(i, -1, -1):
                 if readMat[i][j] < thresh:
                     break
             m = float(i-j)
@@ -1007,9 +1007,9 @@ class ArcPlot(object):
         
         yvals = np.zeros(len(self.seq))
 
-        for i in xrange(len(self.seq)):
+        for i in range(len(self.seq)):
 
-            for j in xrange(i, len(self.seq)):
+            for j in range(i, len(self.seq)):
                 if readmat[i,j] >=thresh:
 
                     idx = int(round((j-i+1)/2))
@@ -1080,7 +1080,7 @@ def parseArgs():
         spl = args.probability.split(',')
         try:
             if len(spl) > 1:
-                args.probability_bins = map(float, spl[1:])
+                args.probability_bins = list(map(float, spl[1:]))
                 args.probability = spl[0]
         except:
             raise TypeError('Incorrectly formatted --probability argument {}'.format(args.probability))
@@ -1095,7 +1095,7 @@ def parseArgs():
         spl = arg.split(',')
         try:
             if len(spl) == 3:
-                bins = map(float, spl[1:])
+                bins = list(map(float, spl[1:]))
                 outarg = spl[0]
             elif len(spl) != 1:
                 raise TypeError
@@ -1143,7 +1143,7 @@ def parseArgs():
 
     # subparse the bounds argument
     if args.bound:
-        args.bound = map(int, args.bound.split(','))
+        args.bound = list(map(int, args.bound.split(',')))
  
     
     # subparse the ct arguments
